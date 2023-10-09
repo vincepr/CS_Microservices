@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PlatformService.Data;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // we dependencyinject => If someone asks for IPlatformRepo he will get our PlatformRepo implementation
