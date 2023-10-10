@@ -69,3 +69,45 @@ kubectl get pods
 # platforms-depl-85677fb59d-nx2zq   1/1     Running   0          77s
 ```
 - if we check our running containers in VscodeExtension, `docker ps` or in DockerDesktop now there should up our (by Kubernetes managed running container: `vincepr/platformservice@sha236......`)
+
+
+## Kubernetes has a desired End State
+![Alt text](./kubernetesDeleteContainer.png)
+When we now stop or delete our container. Kubernetes will do it's best to get back to the desired state. In this case coming back to `replicas: 1`. So it will instantly start a new container back up.
+
+To shut it down for good:
+```
+kubectl get deployments
+kubectl delete deployment platforms-depl
+```
+
+## Creating the Node Port
+- `platforms-np-srv.yaml`
+```yaml
+# our NodePort (for devironment only) to quickly connect into our Cluster/Node
+apiVersion: v1
+kind: Service
+metadata:
+  # the name of it when we work at the command line:
+  name: platformnpservice-srv
+spec:
+  type: NodePort
+  # the NodePort needs to know what Pod it is targeting to
+  selector:
+    app: platformservice
+  ports:
+    - name: platformservice
+      protocol: TCP
+      port: 80
+      targetPort: 80
+```
+- then we start it 
+```
+kubectl apply -f ./K8S/platforms-np-srv.yaml
+
+kubectl get services
+# NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+# kubernetes              ClusterIP   10.96.0.1      <none>        443/TCP        24h
+# platformnpservice-srv   NodePort    10.103.51.73   <none>        80:30085/TCP   36s
+```
+- now we can Postman http://localhost:30085/api/platforms and it will reach into the container, that is maintained by kubernetes

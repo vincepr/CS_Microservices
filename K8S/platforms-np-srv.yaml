@@ -1,0 +1,16 @@
+# our NodePort (for devironment only) to quickly connect into our Cluster/Node
+apiVersion: v1
+kind: Service
+metadata:
+  # the name of it when we work at the command line:
+  name: platformnpservice-srv
+spec:
+  type: NodePort
+  # the NodePort needs to know what Pod it is targeting to
+  selector:
+    app: platformservice
+  ports:
+    - name: platformservice
+      protocol: TCP
+      port: 80
+      targetPort: 80
