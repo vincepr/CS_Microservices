@@ -3,7 +3,7 @@ Going along with Les Jackson's `.Net Microsercies - Full Course` https://www.you
 - it is using Kubernetes, RabbitMQ and GRPC. So there should be quite a few new technologies for me to learn.
 
 Timestamps 
-current: 3:12:16
+current: 3:25:00
 
 
 INTRODUCTION & Theory
