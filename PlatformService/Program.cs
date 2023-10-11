@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 using PlatformService.Data;
+using PlatformService.SyncDataService.Http;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,9 @@ builder.Services.AddDbContext<AppDbContext>(opts => {
 
 // we inject Automapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// we inject our "httpClientFactory" we use to send a simple http post for ever new Platform Created directly to CommandsClient
+builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -35,5 +40,7 @@ app.MapControllers();
 
 // we manually (for testing/quick-development) inject some fake data into our db
 PrepDb.PrepPopulation(app);
+
+Console.WriteLine($"--> CommandService endpoint: {app.Configuration["CommandService"]}");
 
 app.Run();
