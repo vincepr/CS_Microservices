@@ -1,36 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: platforms-depl
+  name: commands-depl
 spec:
   # replicas are basically horizontal scaling (ex multiple api containers that run at the same time etc...)
   replicas: 1
   # selector and template are defining the template were creating
   selector:
     matchLabels:
-      app: platformservice
+      app: commandservice
   template:
     metadata:
       labels:
-        app: platformservice
+        app: commandservice
     spec:
       containers:
         ## we use our previously created docker containers here
-        - name: platformservice
-          image: vincepr/platformservice:latest
+        - name: commandservice
+          image: vincepr/commandservice:latest
 ---
 # we could put this in a separate file, --- separates this as a 'new' one
 # We add a new ClusterIpService to our Deployment
 apiVersion: v1
 kind: Service
 metadata:
-  name: platforms-clusterip-srv
+  name: commands-clusterip-srv
 spec:
   type: ClusterIP
   selector:
-    app: platformservice
+    app: commandservice
   ports:
-    - name: platformservice
+    - name: commandservice
       protocol: TCP
       port: 80
       targetPort: 80

@@ -1,4 +1,4 @@
-# Kubernetes - aka K8S
+# part3 - Kubernetes - aka K8S
 ## what we want out of kubernetes
 Kubernetes is our Container-Orchestrator, making sure everything is running as it should
 

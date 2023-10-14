@@ -1,4 +1,4 @@
-# Microservices
+# part1 - Microservices Architecture
 Going along with Les Jackson's `.Net Microsercies - Full Course` https://www.youtube.com/watch?v=DgVjEo3OGBI on Youtube
 - it is using Kubernetes, RabbitMQ and GRPC. So there should be quite a few new technologies for me to learn.
 

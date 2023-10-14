@@ -1,4 +1,4 @@
-# Platform Service
+# part2 - Platform Service
 part of the https://github.com/vincepr/CS_Microservices Project
 
 ## setup
