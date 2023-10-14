@@ -16,7 +16,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();   // disabled https while inside our own Cluster for now
 
 app.UseAuthorization();
 

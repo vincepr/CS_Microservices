@@ -32,7 +32,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();   // disabling http while inside our cluster
 
 app.UseAuthorization();
 
