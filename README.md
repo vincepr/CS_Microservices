@@ -85,7 +85,7 @@ GRPC
 
 # Solution Architecture
 ## Microservices Architecture
-![microservices scetch](./Microservices.excalidraw.svg)
+![microservices scetch](./img/Microservices.excalidraw.svg)
 
 
 
@@ -105,5 +105,5 @@ GRPC
 
 **Controller(Synchronous-in)** - API Rest controller listening to external http Requests and then sending back the Response (using a Dto)
 
-![Alt text](./ServicesArchitecturePlatform.excalidraw.svg)
-![Alt text](./ServicesArchitectureCommand.excalidraw.svg)
+![Alt text](./img/ServicesArchitecturePlatform.excalidraw.svg)
+![Alt text](./img/ServicesArchitectureCommand.excalidraw.svg)
