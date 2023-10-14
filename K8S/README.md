@@ -8,7 +8,7 @@ Kubernetes is our Container-Orchestrator, making sure everything is running as i
 
 ## Notes on Architecture
 
-![Alt text](./KubernetesArchitecture.excalidraw.svg)
+![Alt text](../img/KubernetesArchitecture.excalidraw.svg)
 
 **Cluster** - a group of servers/VM's that we run on. In this case we just have our desktop as our one Cluster we run everyhing on.
 
@@ -72,7 +72,7 @@ kubectl get pods
 
 
 ## Kubernetes has a desired End State
-![Alt text](./kubernetesDeleteContainer.png)
+![Alt text](../img/kubernetesDeleteContainer.png)
 When we now stop or delete our container. Kubernetes will do it's best to get back to the desired state. In this case coming back to `replicas: 1`. So it will instantly start a new container back up.
 
 To shut it down for good:

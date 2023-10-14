@@ -1,0 +1,11 @@
+# the persistent volume claim. Basically to stake out real memory for the SQl-DB
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mssql-claim
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 200Mi

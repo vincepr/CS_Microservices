@@ -3,7 +3,7 @@ Going along with Les Jackson's `.Net Microsercies - Full Course` https://www.you
 - it is using Kubernetes, RabbitMQ and GRPC. So there should be quite a few new technologies for me to learn.
 
 Timestamps 
-current: 5:06:20
+current: 5:30:20
 
 INTRODUCTION & Theory
 - 2:39 Course Approach
@@ -85,7 +85,7 @@ GRPC
 
 # Solution Architecture
 ## Microservices Architecture
-![microservices scetch](./Microservices.excalidraw.svg)
+![microservices scetch](./img/Microservices.excalidraw.svg)
 
 
 
@@ -105,5 +105,5 @@ GRPC
 
 **Controller(Synchronous-in)** - API Rest controller listening to external http Requests and then sending back the Response (using a Dto)
 
-![Alt text](./ServicesArchitecturePlatform.excalidraw.svg)
-![Alt text](./ServicesArchitectureCommand.excalidraw.svg)
+![Alt text](./img/ServicesArchitecturePlatform.excalidraw.svg)
+![Alt text](./img/ServicesArchitectureCommand.excalidraw.svg)
