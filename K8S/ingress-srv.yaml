@@ -1,0 +1,36 @@
+# in this file we basically define the routing
+# that the ingress API-Gateway will use
+apiVersion: networking.k8s.io/v1
+## -> Warning: annotation "kubernetes.io/ingress.class" is deprecated, please use 'spec.ingressClassName' instead
+## -> were ignoring this for now. TODO: check  if we need to fix this.
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+## we define the rules of our routing
+spec:
+  rules:
+  ## we want to use our loopback adress here, we will make the 'acme.com' point tot that
+  ## - we add "127.0.0.1 acme.com" to 
+    - host: acme.com
+      http:
+        paths:
+        ## this is the endpoint where we can get/getById/Post platforms
+          - path: /api/platforms
+            pathType: Prefix
+            backend:
+              service:
+                name: platforms-clusterip-srv
+                port:
+                  number: 80
+          ## this is the endpoint where the signal from platforms->commands gets send
+          - path: /api/c/platforms
+            pathType: Prefix
+            backend:
+              service:
+                name: commands-clusterip-srv
+                port:
+                  number: 80
+

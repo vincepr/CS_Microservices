@@ -1,4 +1,5 @@
 # our NodePort (for devironment only) to quickly connect into our Cluster/Node
+# - this is basically our way to connect into the Cluster
 apiVersion: v1
 kind: Service
 metadata:

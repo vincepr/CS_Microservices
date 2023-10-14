@@ -1,0 +1,172 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "CS_Microservices",
+    "dateExported": "2023-10-14T20:32:13.603Z",
+    "version": "1.1",
+    "folders": [
+        {
+            "_id": "735ecb08-3720-488f-873c-f93b63ea9b54",
+            "name": "CommandsService",
+            "containerId": "",
+            "created": "2023-10-11T15:09:33.359Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "0f112a3e-41dd-4434-a011-bddcb77026a9",
+            "name": "PlatformsService",
+            "containerId": "",
+            "created": "2023-10-11T15:09:43.057Z",
+            "sortNum": 20000
+        },
+        {
+            "_id": "8e3db001-4cc7-4acb-9bd3-ee24a84968c4",
+            "name": "k8s",
+            "containerId": "",
+            "created": "2023-10-14T11:43:32.824Z",
+            "sortNum": 30000
+        },
+        {
+            "_id": "c9668ca9-b408-4ebe-a7c0-629f71d8aad1",
+            "name": "NodePort",
+            "containerId": "8e3db001-4cc7-4acb-9bd3-ee24a84968c4",
+            "created": "2023-10-14T20:30:20.787Z",
+            "sortNum": 50000
+        },
+        {
+            "_id": "4d24a70a-9ec1-4074-9a08-53d66d0492ea",
+            "name": "Ingress ApiGateway",
+            "containerId": "8e3db001-4cc7-4acb-9bd3-ee24a84968c4",
+            "created": "2023-10-14T20:29:41.229Z",
+            "sortNum": 60000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "0f80b9ea-1389-43c0-8319-704faa99326e",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "4d24a70a-9ec1-4074-9a08-53d66d0492ea",
+            "name": "CreateNewPlatform",
+            "url": "http://acme.com/api/platforms/",
+            "method": "POST",
+            "sortNum": 5000,
+            "created": "2023-10-14T20:31:20.232Z",
+            "modified": "2023-10-14T20:31:41.052Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"name\": \"Docker\",\n    \"publisher\": \"Docker company\",\n    \"cost\": \"Free\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "f2be6471-9c9d-4ef9-8144-db13404bd11c",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "0f112a3e-41dd-4434-a011-bddcb77026a9",
+            "name": "platform GetAll",
+            "url": "http://localhost:5062/api/platforms",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2023-10-09T17:48:03.471Z",
+            "modified": "2023-10-14T09:04:10.115Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "227ee878-ebed-4e0d-9c9f-66abf4d41b20",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "c9668ca9-b408-4ebe-a7c0-629f71d8aad1",
+            "name": "CreateNewPlatform",
+            "url": "http://localhost:30085/api/platforms/",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-10-14T12:58:52.347Z",
+            "modified": "2023-10-14T13:00:20.058Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"name\": \"Docker\",\n    \"publisher\": \"Docker company\",\n    \"cost\": \"Free\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "7b6c481f-f65d-421e-b612-14b97874b7f6",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "4d24a70a-9ec1-4074-9a08-53d66d0492ea",
+            "name": "GetAllPlatforms",
+            "url": "http://acme.com/api/platforms",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2023-10-14T20:30:48.989Z",
+            "modified": "2023-10-14T20:31:14.775Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "b43e6d30-9d00-4e7c-9892-40a0a02c8458",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "0f112a3e-41dd-4434-a011-bddcb77026a9",
+            "name": "platform GetById",
+            "url": "http://localhost:5062/api/platforms/1",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2023-10-09T18:13:06.005Z",
+            "modified": "2023-10-09T18:13:52.456Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "d23775a7-bd7f-4547-b341-7947bf92bcd7",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "c9668ca9-b408-4ebe-a7c0-629f71d8aad1",
+            "name": "GetAllPlatforms",
+            "url": "http://localhost:30085/api/platforms",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2023-10-14T11:43:47.071Z",
+            "modified": "2023-10-14T11:44:02.055Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "bb38cf83-b0e0-4d26-a4b6-6236eb0b8bb5",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "0f112a3e-41dd-4434-a011-bddcb77026a9",
+            "name": "platform CreateNew",
+            "url": "http://localhost:5062/api/platforms/",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2023-10-09T18:31:29.258Z",
+            "modified": "2023-10-09T18:33:38.458Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"name\": \"Docker\",\n    \"publisher\": \"Docker company\",\n    \"cost\": \"Free\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "5a66eeeb-5289-4b40-af5a-998befc1d0a0",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "735ecb08-3720-488f-873c-f93b63ea9b54",
+            "name": "TestInbound",
+            "url": "http://localhost:6000/api/c/platforms",
+            "method": "POST",
+            "sortNum": 60000,
+            "created": "2023-10-11T15:09:57.577Z",
+            "modified": "2023-10-11T15:10:44.443Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        }
+    ]
+}
