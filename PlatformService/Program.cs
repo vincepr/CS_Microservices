@@ -41,6 +41,6 @@ app.MapControllers();
 // we manually (for testing/quick-development) inject some fake data into our db
 PrepDb.PrepPopulation(app);
 
-Console.WriteLine($"--> CommandService endpoint: {app.Configuration["CommandService"]}");
+Console.WriteLine($"--> config[CommandService] endpoint: {app.Configuration["CommandService"]}");
 
 app.Run();
