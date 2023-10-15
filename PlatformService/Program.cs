@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
+using PlatformService.AsyncDataServices;
 using PlatformService.Data;
 using PlatformService.SyncDataService.Http;
 
@@ -25,6 +26,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // we inject our "httpClientFactory" we use to send a simple http post for ever new Platform Created directly to CommandsClient
 builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
+
+builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

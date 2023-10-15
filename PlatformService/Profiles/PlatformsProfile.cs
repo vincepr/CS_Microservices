@@ -19,5 +19,6 @@ public class PlatformsProfile : Profile
         // Because Names of attributes match 1:1 this is all it needs
         CreateMap<Platform, PlatformReadDto>(); 
         CreateMap<PlatformCreateDto, Platform>();
+        CreateMap<PlatformReadDto, PlatformPublishdDto>();
     }
 }
