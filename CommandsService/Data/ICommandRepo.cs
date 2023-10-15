@@ -17,6 +17,6 @@ public interface ICommandRepo
     
     // Commands
     IEnumerable<Command> GetCommandsForPlatform(int platId);
-    Command GetCommand(int platId, int commandId);
+    Command? GetCommand(int platId, int commandId);
     void CreateCommand(int platId, Command command);
 }

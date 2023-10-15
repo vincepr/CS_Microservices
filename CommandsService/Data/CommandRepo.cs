@@ -32,9 +32,11 @@ public class CommandRepo : ICommandRepo
         return _ctx.Platforms.ToList();
     }
 
-    public Command GetCommand(int platId, int commandId)
+    public Command? GetCommand(int platId, int commandId)
     {
-        return _ctx.Commands.Where(c => c.PlatformId == platId && c.Id == commandId).FirstOrDefault();
+        return _ctx.Commands
+            .Where(c => c.PlatformId == platId && c.Id == commandId)
+            .FirstOrDefault();
     }
 
     public IEnumerable<Command> GetCommandsForPlatform(int platId)
