@@ -16,7 +16,7 @@ spec:
         - name: mssql
           image: mcr.microsoft.com/mssql/server:2017-latest
           ports:
-            - containerPort: 1443
+            - containerPort: 1433
           env:
             - name: MSSQL_PID
               value: "Express"
@@ -24,17 +24,18 @@ spec:
               value: "Y"
             - name: SA_PASSWORD
               valueFrom:
+                ## this name came from the `kubectl create secret generic mssql --from-literal=SA_PASSWORD="password123!"`
                 secretKeyRef:
-                  name: mssql ## this name came from the `kubectl create secret generic mssql --from-literal=SA_PASSWORD="password123!"`
+                  name: mssql
                   key: SA_PASSWORD
+          ## the path where in our dockercontainer the data is located at:
           volumeMounts:
-            ## the path where in our dockercontainer the data is located at:
             - mountPath: /var/opt/mssql/data
               name: mssqldb
+      ## this references the one we created in our: `local-volumeclaim.yaml` 
       volumes:
         - name: mssqldb
           persistentVolumeClaim:
-            ## this references the one we created in our: `local-volumeclaim.yaml` 
             claimName: mssql-claim
 ---
 # the DB needs to be accessible for it's Service so we create a ClusterIP for it

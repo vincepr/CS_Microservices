@@ -1,4 +1,4 @@
-# Sql Server 
+# part5/1 - creating Sql Server inside Kubernetes
 
 ## Terminology
 1. Persistent Volume Claim - we stake in our yaml file that we need some persistent storage
@@ -35,7 +35,7 @@ kubectl get pvc
 
 ## use kubernetes secrets to store the sensitive data (here sql-password)
 ```
-kubectl create secret generic mssql --from-literal=SA_PASSWORD="pa55sword!"
+kubectl create secret generic mssql --from-literal=SA_PASSWORD="pa55word!"
 ```
 
 ## create the ms-sql-server deploy
@@ -107,13 +107,13 @@ spec:
   selector:
     app: mssql
   ports:
-    - protocol: TCP
-      port: 1433
-      targetPort: 1433
+  - protocol: TCP
+    port: 1433
+    targetPort: 1433
 ```
 
 - then we fire it up:
-    - we can see how it shows up with `EXTERNAL-IP=localhost` so we should be able to reach there at port 31483
+    - we can see how it shows up in colum: `EXTERNAL-IP=localhost` so we should be able to reach there at port 1433
 ```
 kubectl apply -f K8S/mssql-plat-depl.yaml
 
@@ -126,3 +126,8 @@ kubectl get services
 # platformnpservice-srv     NodePort       10.103.51.73    <none>        80:30085/TCP     4d1h
 # platforms-clusterip-srv   ClusterIP      10.97.239.139   <none>        80/TCP           10h
 ```
+
+![Alt text](./img/sqlLogin.png)
+
+
+## part5/2

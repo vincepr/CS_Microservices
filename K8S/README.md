@@ -112,7 +112,7 @@ kubectl get services
 ```
 - now we can Postman http://localhost:30085/api/platforms and it will reach into the container, that is maintained by kubernetes
 
-# partofpart4 NGINX Api-Gateway
+# part4/2 - NGINX Api-Gateway
 - from the following repo: https://github.com/kubernetes/ingress-nginx we get:
 ```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
