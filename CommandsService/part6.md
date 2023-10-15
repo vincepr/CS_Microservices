@@ -1,7 +1,7 @@
 # part 6 - multi resource api
 In this step we extend the CommandsService to do some actual work. (while using information it gathered from the PlatformService)
 
-|Action|Verb| | Controller|
+|Action|Verb| |Controller|
 |---|---|---|---|
 |GetAllPlaforms|GET|/api/c/platforms|Platform|
 |GetAllCommands ForPlatform|GET|/api/c/platf1orms/{platformId}/commands|Command|
@@ -11,8 +11,7 @@ In this step we extend the CommandsService to do some actual work. (while using 
 ## Code
 - in `Models/` we add our 2 Models
 ```csharp
-public class Command
-{
+public class Command {
     [Key, Required]
     public int Id { get; set; }
     public required string HowTo { get; set; }
@@ -23,8 +22,7 @@ public class Command
 ```
 
 ```csharp
-public class Platform
-{
+public class Platform {
     public int Id { get; set; }
     public int ExternalId { get; set; }
     public required string Name { get; set; }
@@ -34,8 +32,7 @@ public class Platform
 
 - in `Data/` we add our DbContext
 ```csharp
-public class AppDbContext : DbContext
-{
+public class AppDbContext : DbContext {
     public AppDbContext(DbContextOptions<AppDbContext> opts) : base(opts){}
     public DbSet<Platform> Platforms { get; set; }
     public DbSet<Command> Commands { get; set; }
@@ -61,8 +58,7 @@ public class AppDbContext : DbContext
 ```
 - in `Data/` we add our Repository Pattern
 ```csharp
-public class CommandRepo : ICommandRepo
-{
+public class CommandRepo : ICommandRepo {
     private readonly AppDbContext _ctx;
 
     public CommandRepo(AppDbContext ctx) {
@@ -104,8 +100,7 @@ public class CommandRepo : ICommandRepo
 ```
 
 ```csharp
-public interface ICommandRepo
-{
+public interface ICommandRepo {
     bool SaveChanges();
 
     // Platforms
@@ -117,5 +112,113 @@ public interface ICommandRepo
     IEnumerable<Command> GetCommandsForPlatform(int platId);
     Command GetCommand(int platId, int commandId);
     void CreateCommand(int platId, Command command);
+}
+```
+- we inject those to our `Programm.cs`:
+```csharp
+// we dependenyc inject:
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddDbContext<AppDbContext>(opts => opts.UseInMemoryDatabase("InMem") );
+builder.Services.AddScoped<ICommandRepo, CommandRepo>();
+```
+
+- we add Automapper Mappings
+```csharp
+public class CommandsProfile : AutoMapper.Profile {
+    public CommandsProfile() {
+        // <Source> -> <Target>
+        CreateMap<Platform, PlatformReadDto>();
+        CreateMap<CommandCreateDto, Command>();
+        CreateMap<Command, CommandReadDto>();
+    }
+}
+```
+
+
+- we add Dtos for all needed uscases(3 atm)
+```csharp
+public class CommandCreateDto {
+    public required string HowTo { get; set; }
+    public required string CommandLine { get; set; }
+    // public required int PlatformId { get; set; }  <- this we get internally!
+}
+```
+
+### And we create the Controllers
+- `Controllers/CommandsController`
+```csharp
+[ApiController]
+[Route("api/c/platforms/{platformId}/[controller]")]
+public class CommandsController : ControllerBase
+{
+    private readonly ICommandRepo _repository;
+    private readonly IMapper _mapper;
+
+    public CommandsController(ICommandRepo repo, IMapper mapper)
+    {
+       _repository = repo;
+       _mapper = mapper; 
+    }
+
+    [HttpGet]
+    public ActionResult<IEnumerable<CommandReadDto>> GetAllCommandsByPlatformId(int platformId) {
+        Console.WriteLine($"--> Hit GetAllCommandsByPlatformId with platformId={platformId}");
+        if (!_repository.PlatformExists(platformId)) return NotFound();
+        var commandItems = _repository.GetCommandsForPlatform(platformId);
+        return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandItems));
+    }
+
+    [HttpGet("{commandId}", Name = "GetCommandForPlatform")] // again we give this a Name to be able to reference it later. CreatingNew -> pointing to new createdID@this
+    public ActionResult<CommandReadDto> GetCommandForPlatform(int platformId, int commandId) {
+        Console.WriteLine($"--> Hit GetCommandForPlatform with platformId={platformId} commandId={commandId}");
+        if (!_repository.PlatformExists(platformId)) return NotFound();
+        var command = _repository.GetCommand(platformId, commandId);
+        if (command is null) return NotFound();
+        return Ok(_mapper.Map<CommandReadDto>(command));
+    }
+
+    [HttpPost]
+    public ActionResult<CommandReadDto> CreateCommandForPlatform(int platformId, CommandCreateDto commandDto) {
+        Console.WriteLine($"--> Hit CreateCommandForPlatform with platformId={platformId}");
+        if (!_repository.PlatformExists(platformId)) return NotFound();
+        var command = _mapper.Map<Command>(commandDto);
+        _repository.CreateCommand(platformId, command);
+        _repository.SaveChanges();
+        var responseDto = _mapper.Map<CommandReadDto>(command);
+        return CreatedAtRoute(nameof(GetCommandForPlatform),
+            new {platformId=platformId, commandId=responseDto.Id}, responseDto);
+    }
+}
+```
+- and we extend the already existing: `Constrollers/PlatformsController`
+```csharp
+namespace CommandsService.Controllers
+{
+    [Route("api/c/[controller]")]   // the c is just so we can differentiate our two services for now
+    [ApiController]
+    public class PlatformsController : ControllerBase
+    {
+        private readonly ICommandRepo _repository;
+        private readonly IMapper _mapper;
+
+        public PlatformsController(ICommandRepo repo, IMapper mapper)
+        {
+           _repository = repo;
+           _mapper = mapper; 
+        }
+
+        [HttpPost]
+        public ActionResult TestInboundConnection() {
+            Console.WriteLine("--> Inbound POST # Command Service");
+            return Ok("Inbound test of from Platforms Controller");
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<PlatformReadDto>> GetAllPlatforms() {
+            Console.WriteLine("--> Platforms-data from CommandsService was requested");
+            var platformItems = _repository.GetAllPlatforms();
+            return Ok(_mapper.Map<IEnumerable<PlatformReadDto>>(platformItems));
+        }
+    }
 }
 ```
