@@ -2,7 +2,17 @@
 Going along with Les Jackson's `.Net Microsercies - Full Course` https://www.youtube.com/watch?v=DgVjEo3OGBI on Youtube
 - it is using Kubernetes, RabbitMQ and GRPC. So there should be quite a few new technologies for me to learn.
 
-Timestamps 
+## technologies used
+- EntityFramework
+    - AutoMapper
+- Kubernetes
+    - Docker
+- MS-Sql-Server
+- Rabbit MQ
+- Grpc
+
+
+## Timestamps 
 current: 6:06:00
 
 INTRODUCTION & Theory
@@ -84,6 +94,10 @@ GRPC
 - 11:00:55 Supporter Credits
 
 # Solution Architecture
+The Platforms provided by the PlatformService are the "Parent Resource". Platforms like docker, dotnet, kubernetes are defined there. 
+
+The CommandService holds an List of commandline Commands for each of those platforms. Therefore it will get the neccesary information about existing platforms from the PlatformService. first synchronous, asynchronous, via an Messagebus and lastly via grpc. 
+
 ## Microservices Architecture
 ![microservices scetch](./img/Microservices.excalidraw.svg)
 
