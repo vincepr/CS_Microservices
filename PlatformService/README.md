@@ -437,8 +437,9 @@ if(isProduction) {
 ```
 
 ### Generate the Migrations:
+- THE FOLLOWING WILL NOT WORK:
 ```
-dotnet --project PlatformService ef migrations add initialmigration
+!! dotnet --project PlatformService ef migrations add initialMigration
 
 >>
 Unable to resolve service for type 'Microsoft.EntityFrameworkCore.Migrations.IMigrator'. This is often because no database provider has been configured for this DbContext. A provider can be configured by overriding the 'DbContext.OnConfiguring' method or by using 'AddDbContext' on the application service provider. If 'AddDbContext' is used, then also ensure that your DbContext type accepts a DbContextOptions<TContext> object in its constructor and passes it to the base constructor for DbContext.    
@@ -457,12 +458,12 @@ Unable to resolve service for type 'Microsoft.EntityFrameworkCore.Migrations.IMi
 //     opts.UseInMemoryDatabase("InMem");
 // }
 ```
-- and then revert back once we ran the `dotnet --project PlatformService ef migrations add initialmigration`
+- and then revert back once we ran the `dotnet --project PlatformService ef migrations add initialMigration`
 ### Solution B
 - The for me cleaner looking way. Passing the environment to dotnet in the terminal:
   - so it will build migrations assuming env.Development is set.
 ```
-dotnet ef --project PlatformService migrations add initialmigration -- --environment Production
+dotnet ef --project PlatformService migrations add initialMigration -- --environment Production
 ```
 
 ### building, pushing to dockerhub, applying and restarting the kubernetesService

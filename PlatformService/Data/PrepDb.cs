@@ -13,7 +13,7 @@ namespace PlatformService.Data
         {
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
-                SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>(), isProduction);
+                SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>()!, isProduction);
             }
         }
 

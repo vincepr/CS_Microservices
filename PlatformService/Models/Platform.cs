@@ -11,10 +11,10 @@ namespace PlatformService.Models
         [Key, Required] // because of the name EF would interpret this as key anyway, but never hurts to be explicit
         public int Id { get; set; }
         [Required]
-        public string Name { get; set; }
+        public required string Name { get; set; }
         [Required]
-        public string Publisher { get; set; }
+        public required string Publisher { get; set; }
         [Required]
-        public string Cost { get; set; }
+        public required string Cost { get; set; }
     }
 }

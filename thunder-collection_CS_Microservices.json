@@ -1,7 +1,7 @@
 {
     "client": "Thunder Client",
     "collectionName": "CS_Microservices",
-    "dateExported": "2023-10-14T20:32:13.603Z",
+    "dateExported": "2023-10-15T18:27:27.355Z",
     "version": "1.1",
     "folders": [
         {
@@ -34,7 +34,7 @@
         },
         {
             "_id": "4d24a70a-9ec1-4074-9a08-53d66d0492ea",
-            "name": "Ingress ApiGateway",
+            "name": "NGINX - Ingress ApiGateway",
             "containerId": "8e3db001-4cc7-4acb-9bd3-ee24a84968c4",
             "created": "2023-10-14T20:29:41.229Z",
             "sortNum": 60000
@@ -98,11 +98,11 @@
             "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
             "containerId": "4d24a70a-9ec1-4074-9a08-53d66d0492ea",
             "name": "GetAllPlatforms",
-            "url": "http://acme.com/api/platforms",
+            "url": "http://acme.com/api/platforms/",
             "method": "GET",
             "sortNum": 10000,
             "created": "2023-10-14T20:30:48.989Z",
-            "modified": "2023-10-14T20:31:14.775Z",
+            "modified": "2023-10-14T20:33:49.696Z",
             "headers": [],
             "params": [],
             "tests": []
@@ -166,6 +166,67 @@
             "modified": "2023-10-11T15:10:44.443Z",
             "headers": [],
             "params": [],
+            "tests": []
+        },
+        {
+            "_id": "d87fac91-1d3b-4767-a21c-7f5d261ab07d",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "735ecb08-3720-488f-873c-f93b63ea9b54",
+            "name": "GetAllPlatforms",
+            "url": "http://localhost:6000/api/c/platforms",
+            "method": "GET",
+            "sortNum": 80000,
+            "created": "2023-10-15T17:21:58.782Z",
+            "modified": "2023-10-15T17:22:03.876Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "da68d2ff-e109-40bd-b15e-9e671539f11d",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "735ecb08-3720-488f-873c-f93b63ea9b54",
+            "name": "GetCommands forPlatformId",
+            "url": "http://localhost:6000/api/c/platforms/2/commands",
+            "method": "GET",
+            "sortNum": 90000,
+            "created": "2023-10-15T17:38:37.275Z",
+            "modified": "2023-10-15T17:41:15.371Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "a7c74c18-ee80-4661-833c-c6e435a45431",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "735ecb08-3720-488f-873c-f93b63ea9b54",
+            "name": "Get ONE Command ForPlatform",
+            "url": "http://localhost:6000/api/c/platforms/2/commands/3",
+            "method": "GET",
+            "sortNum": 100000,
+            "created": "2023-10-15T17:49:13.542Z",
+            "modified": "2023-10-15T17:50:07.885Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "744229ea-fc56-4558-adf8-a8ec2d7c613b",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "735ecb08-3720-488f-873c-f93b63ea9b54",
+            "name": "Create Command forPlatform",
+            "url": "http://localhost:6000/api/c/platforms/1/commands",
+            "method": "POST",
+            "sortNum": 110000,
+            "created": "2023-10-15T18:07:14.458Z",
+            "modified": "2023-10-15T18:08:26.022Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"HowTo\": \"Build a .net project\",\n  \"CommandLine\": \"dotnet build\"\n}",
+                "form": []
+            },
             "tests": []
         }
     ]

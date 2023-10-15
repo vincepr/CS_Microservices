@@ -38,13 +38,13 @@ kubectl-all: kubectl-services
 
 
 # build dockerfiles, push them to dockerhub and rollout restarts (assuming the yaml files did NOT change)
-dev: buildall pushall
+dev: buildall pushall rolloutall
+
+rolloutall:
 	kubectl rollout restart deployment commands-depl 
 	kubectl rollout restart deployment platforms-depl
 	kubectl get pods
 	kubectl get deployments
-
-- The for me cleaner looking way. Passing the environment to dotnet in the terminal:
 
 
 buildall: dockerbuildcservice dockerbuildpservice
