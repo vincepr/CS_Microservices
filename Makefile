@@ -22,7 +22,7 @@ kubectl-services:
 
 # builds everything. 
 ## On a new PC we also must do the 2 above steps before:
-## - kubectl create secret generic mssql --from-literal=SA_PASSWORD="pa55word!"
+## - kubectl create secret generic mssql --from-literal=SA_PASSWORD="pa55sword!"
 ## - we add the folowing line to `C:\Windows\System32\drivers\etc\hosts` -> "127.0.0.1 acme.com"
 kubectl-all: kubectl-services
 	kubectl apply -f $(KPATH)/commands-depl.yaml
@@ -37,10 +37,17 @@ kubectl-all: kubectl-services
 	kubectl rollout restart deployment mssql-depl
 
 
-# build dockerfiles
-dev: build push
+# build dockerfiles, push them to dockerhub and rollout restarts (assuming the yaml files did NOT change)
+dev: buildall pushall
+	kubectl rollout restart deployment commands-depl 
+	kubectl rollout restart deployment platforms-depl
+	kubectl get pods
+	kubectl get deployments
 
-build: dockerbuildcservice dockerbuildpservice
+- The for me cleaner looking way. Passing the environment to dotnet in the terminal:
+
+
+buildall: dockerbuildcservice dockerbuildpservice
 
 dockerbuildcservice:
 	docker build -t vincepr/commandservice $(CPATH)
@@ -49,7 +56,7 @@ dockerbuildpservice:
 	docker build -t vincepr/platformservice $(PPATH)
 
 ## push dockerfiles to hub
-push:
+pushall:
 	docker push vincepr/commandservice
 	docker push vincepr/platformservice
 
@@ -62,3 +69,16 @@ statuslong:
 	kubectl get deployments -A
 	kubectl get services -A
 	kubectl get pods -A
+
+## run the dotnet projecs from root
+runc:
+	dotnet run --project CommandsService
+
+runp:
+	dotnet run --project PlatformService
+
+delete:
+	kubectl delete deployment commands-depl
+	kubectl delete deployment platforms-depl
+	kubectl delete deployment mssql-depl
+	

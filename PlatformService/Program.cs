@@ -11,7 +11,13 @@ builder.Services.AddScoped<IPlatformRepo, PlatformRepo>();
 
 // we inject our Database context
 builder.Services.AddDbContext<AppDbContext>(opts => {
-    opts.UseInMemoryDatabase("InMem");
+    if (builder.Environment.IsProduction()) {
+        Console.WriteLine("--> CASE PRODUCTION - using SqlServerDb");
+        opts.UseSqlServer(builder.Configuration.GetConnectionString("PlatformsConn"));
+    } else {
+        Console.WriteLine("--> CASE DEV - using InMemoryDB");
+        opts.UseInMemoryDatabase("InMem");
+    }
 });
 
 // we inject Automapper
@@ -39,7 +45,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 // we manually (for testing/quick-development) inject some fake data into our db
-PrepDb.PrepPopulation(app);
+PrepDb.PrepPopulation(app, app.Environment.IsProduction());
 
 Console.WriteLine($"--> config[CommandService] endpoint: {app.Configuration["CommandService"]}");
 
