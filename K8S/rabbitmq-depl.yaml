@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3-management
+          ports:
+            ## first port is just to access the "management" webinterface
+            - containerPort: 15672
+              name: rbmq-mgmt-port
+            ## this is the used port for the Bus itself
+            - containerPort: 5672
+              name: rbmq-msg-port
+---
+# the Bus needs to be accessible from the Services inside Kubernetes, so we create a ClusterIP for it
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: rabbitmq
+  ports:
+    - name: rbmq-mgmt-port
+      protocol: TCP
+      port: 15672
+      targetPort: 15672
+    - name: rbmq-msg-port
+      protocol: TCP
+      port: 5672
+      targetPort: 5672 
+---
+# the Bus also needs to be accessible from outside the Kubernetes (at least for development)
+# so we create a LoadbalancerService for it
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: rabbitmq
+  ports:
+    - name: rbmq-mgmt-port
+      protocol: TCP
+      port: 15672
+      targetPort: 15672
+    - name: rbmq-msg-port
+      protocol: TCP
+      port: 5672
+      targetPort: 5672 
