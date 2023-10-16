@@ -13,7 +13,7 @@ Going along with Les Jackson's `.Net Microsercies - Full Course` https://www.you
 
 
 ## Timestamps 
-current: 8:20:00
+current: 9:19:19
 
 INTRODUCTION & Theory
 - 2:39 Course Approach

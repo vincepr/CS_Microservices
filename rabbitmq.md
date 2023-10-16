@@ -275,6 +275,163 @@ builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
 
 - finally we write the implementation `EventProcessing/EventProcessor.cs`
 ```csharp
+public class EventProcessor : IEventProcessor
+{
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IMapper _mapper;
 
+    public EventProcessor(
+        IServiceScopeFactory scopeFactory,
+        IMapper mapper
+    )
+    {
+        _scopeFactory = scopeFactory;
+        _mapper = mapper;
+    }
+    public void ProcessEvent(string message)
+    {
+        var eventType = DetermineEvent(message);
+        switch (eventType)
+        {
+            case EventType.PlatformPublished:
+                //TODO
+                break;
+            default:
+                break;
+        }
+    }
+
+    private EventType DetermineEvent(string notificationMessage)
+    {
+        Console.WriteLine("--> Determining event");
+        var eventType = JsonSerializer.Deserialize<GenericEventDto>(notificationMessage);
+
+        if (eventType is null)
+        {
+            Console.WriteLine("--> Serializing event-type wrent wrong. Is Null");
+            return EventType.Undetermined;
+        }
+
+        switch (eventType.Event)
+        {
+            case "":
+                Console.WriteLine("--> New_Platform_Published event-type detected.");
+                return EventType.PlatformPublished;
+            default:
+                Console.WriteLine("--> Could not determine event-type.");
+                return EventType.Undetermined;
+        }
+    }
+
+    // TODO use AddPlatform
+    private void AddPlatform(string platformPublishedMessage)
+    {
+        // use the scopeFactory to get access to our repository
+        // this is neccessary because of the different lifetimes of our repo vs our Singleton-EventProcessing
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var repo = scope.ServiceProvider.GetRequiredService<ICommandRepo>();
+            var platformPublishedDto = JsonSerializer.Deserialize<PlatformPublishedDto>(platformPublishedMessage);
+
+            try
+            {
+                var plat = _mapper.Map<Platform>(platformPublishedDto);
+                if (!repo.ExternalPlatformExist(plat.ExternalId))
+                {
+                    repo.CreatePlatform(plat);
+                    repo.SaveChanges();
+                }
+                else
+                {
+                    Console.WriteLine(" --> Platform already exists in local db...");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"--> Could not add Platform do DB; {e.Message}");
+            }
+        }
+    }
+}
+enum EventType
+{
+    PlatformPublished,  // <= "New_Platform_Published" as Event string
+    Undetermined        // <= any other Event
+}
+```
+
+- `AsyncDataServices/MessageBusSubscribers.cs`
+```csharp
+// A Background Service. A long running Task. That probably will run over the whole duration of the App. If nothing goes wrong
+public class MessageBusSubscriber : BackgroundService
+{
+    private readonly IConfiguration _config;
+    private readonly IEventProcessor _eventProcessor;
+    private IConnection _connection;
+    private IModel _channel;
+    private string _queueName;
+
+    public MessageBusSubscriber(IConfiguration config, IEventProcessor eventProcessor)
+    {
+        _config = config;
+        _eventProcessor = eventProcessor;
+        InitializeMQ();
+    }
+
+    private void InitializeMQ()
+    {
+        var factory = new ConnectionFactory()
+        {
+            HostName = _config["RabbitMQHost"],
+            Port = int.Parse(_config["RabbitMQPort"]!),
+        };
+        _connection = factory.CreateConnection();
+        _channel = _connection.CreateModel();
+        _channel.ExchangeDeclare(exchange: "trigger", type: ExchangeType.Fanout);
+        _queueName = _channel.QueueDeclare().QueueName;
+        _channel.QueueBind(queue: _queueName,
+            exchange: "trigger",
+            routingKey: "");
+
+        Console.WriteLine("--> Listening on the Message Bus.");
+
+        _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;
+    }
+
+    private void RabbitMQ_ConnectionShutdown(object? sender, ShutdownEventArgs e)
+    {
+        Console.WriteLine("--> connection Shutdown");
+    }
+
+    public override void Dispose()
+    {
+        if (_channel.IsOpen)
+        {
+            _channel.Close();
+            _connection.Close();
+        }
+        base.Dispose();
+    }
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        stoppingToken.ThrowIfCancellationRequested();
+
+        var consumer = new EventingBasicConsumer(_channel);
+        consumer.Received += (Modulehandle, ea) => 
+        {
+            Console.WriteLine("--> Event Received,");
+            var body = ea.Body;
+            var notificationMessage = Encoding.UTF8.GetString(body.ToArray());
+            _eventProcessor.ProcessEvent(notificationMessage);
+        };
+        _channel.BasicConsume(queue: _queueName, autoAck: true, consumer: consumer);
+        return Task.CompletedTask;
+    }
+}
+```
+
+- we inject it to our main:
+```csharp
+builder.Services.AddHostedService<MessageBusSubscriber>();
 ```
 
