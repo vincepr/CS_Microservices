@@ -84,7 +84,7 @@ kubectl apply -f K8S/rabbitmq-depl.yaml
 ```
 - now we can reach out messagebus webinterface with `localhost:15672` username: guest password: guest
 
-## Code in PlatformService
+## Code in PlatformService - The Publisher
 ```
 dotnet add package RabbitMQ.Client
 ```
@@ -195,3 +195,18 @@ public class MessageBusClient : IMessageBusClient
 ```
 
 ### We Use that Bus to send in our Controller
+- for a first test we just spin up both Services while having Kubernetes active (for the RabbitMQ Bus).
+- When we send a postrequest to `http://localhost:5062/api/platforms/` we see in our logs for PlatformService:
+```
+--> Connected to MessageBus
+info: Microsoft.EntityFrameworkCore.Update[30100]
+      Saved 1 entities to in-memory store.
+// ...
+--> Sync POST to CommandService was OK.
+--> RabbitMQ Connection Open, sending message.
+--> We have sent {"Id":4,"Name":"Docker","Event":"New_Platform_Published"}
+```
+- And a peek into the RabbitMQ manager web interface shows the recent message:
+![Alt text](../img/rabbitSuccess.png)
+
+## Code in CommandsService - The Subscriber
