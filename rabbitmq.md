@@ -207,6 +207,74 @@ info: Microsoft.EntityFrameworkCore.Update[30100]
 --> We have sent {"Id":4,"Name":"Docker","Event":"New_Platform_Published"}
 ```
 - And a peek into the RabbitMQ manager web interface shows the recent message:
-![Alt text](../img/rabbitSuccess.png)
+![Alt text](./img/rabbitSuccess.png)
 
 ## Code in CommandsService - The Subscriber
+### Setup
+- add the package
+```
+dotnet add package RabbitMQ.Client
+```
+- add RabbitMQ-configSettings to `appsettings.Development.json` and add `appsettings.Production.json` like previous Service
+
+- we add two new Dtos: `Dtos/GenericEventDto.cs` `Dtos/PlatformPublishedDto.cs`
+```csharp
+public class GenericEventDto
+{
+    public required string Event { get; set; }
+}
+public class PlatformPublishedDto 
+{
+    public required int Id { get; set; }
+    public required string Name { get; set; }  
+    public required string Event { get; set; }
+}
+```
+
+- we add to our Mappings:
+```csharp
+CreateMap<PlatformPublishedDto, Platform>()
+    .ForMember(dest => dest.ExternalId, opt => opt.MapFrom(src => src.Id));
+    // Basically we want to take PlatformPublishedDto.Id and map it to our Platform.ExternalID
+```
+
+- we add to our `Data/ICommandRepo.cs`
+```csharp
+/// <summary>
+/// Checks if we already added this ExternalPlatform to our data. If so were synced up. Makes sure we dont duplicate data. 
+/// </summary>
+bool ExternalPlatformExist(int ExternalPlatformId);
+```
+- we add to our `Data/CommandRepo.cs`
+```csharp
+public bool ExternalPlatformExist(int ExternalPlatformId)
+{
+    return _ctx.Platforms.Any(p => p.ExternalId == ExternalPlatformId);
+}
+```
+**Note about Dependency Injection:**
+
+The Implementation listening on our Bus will be added as a Singleton. - so for the lifetime of the app.
+- That Singleton-Service will create "instances" of the EventProcessor (available via dependency-injection)
+  - so the EventProcessor MUST have a lifetime the same or greater than it's "parent" - so it MUST be a Singleton aswell.
+  - A Consequence of this is, that we can not inject our repository here in the constructor of EventProcessor(). Because it will only get created once.
+    - so we need to pass in the reference to repo another way. 
+
+- we add `EventProcessing/IEventProcessor.cs`. Basically whenever we get an Event, we use this To Map over our Reactions. Ex we Deserialize it, add it to localPlatformsData if neccessary etc... Ignore it if its a wrong kind of Event...
+```csharp
+public interface IEventProcessor
+{
+    void ProcessEvent(string message);
+}
+```
+
+- and we inject it as singleton in our main:
+```csharp
+builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
+```
+
+- finally we write the implementation `EventProcessing/EventProcessor.cs`
+```csharp
+
+```
+

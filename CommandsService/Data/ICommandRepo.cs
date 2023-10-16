@@ -14,7 +14,12 @@ public interface ICommandRepo
     IEnumerable<Platform> GetAllPlatforms();
     void CreatePlatform(Platform plat);
     bool PlatformExists(int platId);      
-    
+
+    /// <summary>
+    /// Checks if we already added this ExternalPlatform to our data. If so were synced up. Makes sure we dont duplicate data. 
+    /// </summary>
+    bool ExternalPlatformExist(int ExternalPlatformId);
+
     // Commands
     IEnumerable<Command> GetCommandsForPlatform(int platId);
     Command? GetCommand(int platId, int commandId);
