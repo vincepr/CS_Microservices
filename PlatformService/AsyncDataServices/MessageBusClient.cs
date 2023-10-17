@@ -12,8 +12,8 @@ namespace PlatformService.AsyncDataServices;
 public class MessageBusClient : IMessageBusClient
 {
     private readonly IConfiguration _config;
-    private readonly RabbitMQ.Client.IConnection _connection;
-    private readonly RabbitMQ.Client.IModel _channel;
+    private readonly RabbitMQ.Client.IConnection? _connection;
+    private readonly RabbitMQ.Client.IModel? _channel;
 
     public MessageBusClient(IConfiguration configuration) {
         _config = configuration;
@@ -45,7 +45,7 @@ public class MessageBusClient : IMessageBusClient
     public void PublishNewPlatform(PlatformPublishdDto newCreatedPlatformDto) {
         var message = JsonSerializer.Serialize(newCreatedPlatformDto);
 
-        if (_connection.IsOpen) {
+        if (_connection is not null && _connection.IsOpen) {
             Console.WriteLine("--> RabbitMQ Connection Open, sending message.");
             SendMessage(message);
         } else {
@@ -67,9 +67,9 @@ public class MessageBusClient : IMessageBusClient
     // properly close ressources when this class leaves scope/dies
     public void Dispose() {
         Console.WriteLine("--> MessageBus Disposed");
-        if (_channel.IsOpen) {
+        if (_channel is not null && _channel.IsOpen) {
             _channel.Close();
-            _connection.Close();
+            _connection?.Close();
         }
     }
 
