@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PlatformService.AsyncDataServices;
 using PlatformService.Data;
 using PlatformService.SyncDataService.Http;
+using PlatformService.SyncDataService.Http.Grpc;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +27,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // we inject our "httpClientFactory" we use to send a simple http post for ever new Platform Created directly to CommandsClient
 builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
-
+builder.Services.AddGrpc();
 builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
 builder.Services.AddControllers();
@@ -45,7 +46,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers();   // this maps all our Controllers by default
+app.MapGrpcService<GrpcPlatformService>();  // the grpcService we have to Add manually
+// we (this is optinal) serve the protobuf file to the client, so they could infer everyhing from it:
+app.MapGet(
+    "/protos/platforms.proto",
+    async context => {
+        await context.Response.WriteAsync(File.ReadAllText("Protos/platforms.proto"));
+    }
+);
 
 // we manually (for testing/quick-development) inject some fake data into our db
 PrepDb.PrepPopulation(app, app.Environment.IsProduction());
