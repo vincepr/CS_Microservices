@@ -239,14 +239,14 @@ docker stop 4edfbdeac6e9
 docker start 4edfbdeac6e9
 // or using the vscode-extension/docker-desktop etc
 ```
-![Alt text](./docker.png)
+![Alt text](../img/docker.png)
 
 ```
 // pushing up to hub.docker.com
 docker push vincepr/platformservice
 // now the docker repo should show up on your hub.docker.com account:
 ```
-![Alt text](./dockerhub.png)
+![Alt text](../img/dockerhub.png)
 
 
 
@@ -388,7 +388,7 @@ kubectl get services
 # platforms-clusterip-srv   ClusterIP      10.97.239.139   <none>        80/TCP           10h
 ```
 
-![Alt text](./img/sqlLogin.png)
+![Alt text](../img/sqlLogin.png)
 
 
 # part5/2
