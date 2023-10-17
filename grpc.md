@@ -27,12 +27,12 @@ In our usecase we want to use Grpc on the CommandsService startup to reach out t
   "Kestrel": {
     "Endpoints": {
       "Grpc": {
-        "Protocols": "Https2",
+        "Protocols": "Http2",
         "Url": "http://platforms-clusterip-srv:666"
       },
       "webApi": {
         "Protocols": "Http1",
-        "Url": "http://platforms-clusterip-srv:666"
+        "Url": "http://platforms-clusterip-srv:80"
       }
     }
   }
