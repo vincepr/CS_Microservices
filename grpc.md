@@ -134,3 +134,74 @@ public class GrpcPlatformService : GrpcPlatform.GrpcPlatformBase {
     }
 }
 ```
+
+
+## Code in CommandsService
+- `appsettings.Development.json` we take the adress from our `PlatformService/Properties/launchSettings.json -> https.url`
+```json
+  "GrpcPlatform": "https://localhost:5001"
+```
+- `appsettings.Production.json`
+```json
+  "GrpcPlatform": "http://platforms-clusterip-srv:666"
+```
+- we copy over `cp PatformService/Protos/platforms.proto CommandsService/Proto/platforms.proto`
+- `CommandsService/CommandsService.csproj` we also add (this time with Yype Client)
+```xml
+  <ItemGroup>
+    <Protobuf Include="Protos/platforms.proto" GrpcServices="Client" />
+  </ItemGroup>
+```
+
+- we add Mappings to `CommandsService/Profiles/CommandsProfile.cs`
+```csharp
+// gRPC-Mappings:
+CreateMap<GrpcPlatformModel, Platform>()
+    .ForMember(dest => dest.ExternalId, opt => opt.MapFrom(src => src.PlatformId))
+    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+    // we explicitly tell that we want noting to map to our.Platform.Commands
+    .ForMember(dest => dest.Commands, opt => opt.Ignore());
+```
+
+- we create `CommandsService/SyncDataServices/Grpc/IPlatformDataClient.cs`
+```csharp
+public interface IPlatformDataClient {
+    IEnumerable<Platform> ReturnAllPlatforms();
+}
+```
+- we add the Scoped dependency injection:
+```csharp
+builder.Services.AddScoped<IPlatformDataClient, PlatformDataClient>();
+```
+- and implement the above`CommandsService/SyncDataServices/Grpc/PlatformDataClient.cs` 
+```csharp
+public class PlatformDataClient : IPlatformDataClient
+{
+    private readonly IConfiguration _config;
+    private readonly IMapper _mapper;
+
+    public PlatformDataClient(IConfiguration config, IMapper mapper)
+    {
+        _config = config;
+        _mapper = mapper;
+    }
+    public IEnumerable<Platform> ReturnAllPlatforms()
+    {
+        Console.WriteLine($"--> Calling gRPC Service {_config["GrpcPlatform"]}");
+        var channel = GrpcChannel.ForAddress(_config["GrpcPlatform"]!);
+        var client = new GrpcPlatform.GrpcPlatformClient(channel);
+        var request = new GetAllRequests(); // even though this is empty we still have to build it and send it over
+
+        try
+        {
+            var reply = client.GetAllPlatforms(request);
+            return _mapper.Map<IEnumerable<Platform>>(reply.Platform);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"--> Could not call gRPC Server! {e.Message}");
+            return Enumerable.Empty<Platform>();
+        }
+    }
+}
+```
