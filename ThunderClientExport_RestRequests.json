@@ -1,20 +1,27 @@
 {
     "client": "Thunder Client",
     "collectionName": "CS_Microservices",
-    "dateExported": "2023-10-17T07:38:27.617Z",
+    "dateExported": "2023-10-17T11:35:38.977Z",
     "version": "1.1",
     "folders": [
         {
             "_id": "735ecb08-3720-488f-873c-f93b63ea9b54",
             "name": "CommandsService",
-            "containerId": "",
+            "containerId": "d881d08d-ad66-4305-8be2-14f3ecdae597",
             "created": "2023-10-11T15:09:33.359Z",
             "sortNum": 10000
         },
         {
+            "_id": "d881d08d-ad66-4305-8be2-14f3ecdae597",
+            "name": "local-dev-environment",
+            "containerId": "",
+            "created": "2023-10-17T09:27:22.008Z",
+            "sortNum": 15000
+        },
+        {
             "_id": "0f112a3e-41dd-4434-a011-bddcb77026a9",
             "name": "PlatformsService",
-            "containerId": "",
+            "containerId": "d881d08d-ad66-4305-8be2-14f3ecdae597",
             "created": "2023-10-11T15:09:43.057Z",
             "sortNum": 20000
         },
@@ -100,6 +107,25 @@
             "modified": "2023-10-14T20:33:49.696Z",
             "headers": [],
             "params": [],
+            "tests": []
+        },
+        {
+            "_id": "a8b6e18f-2f00-4055-8c5f-f5ee4ecff42e",
+            "colId": "32d15121-52a3-4395-9b5b-768b13e68438",
+            "containerId": "ff45c8ef-0f18-4a09-a476-2fd754076e17",
+            "name": "CreateNewPlatform4",
+            "url": "http://acme.com/api/platforms/",
+            "method": "POST",
+            "sortNum": 15000,
+            "created": "2023-10-17T11:34:03.032Z",
+            "modified": "2023-10-17T11:34:53.012Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"name\": \"Vagrant\",\n    \"publisher\": \"Hashicorp\",\n    \"cost\": \"Paid\"\n}",
+                "form": []
+            },
             "tests": []
         },
         {

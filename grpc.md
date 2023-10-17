@@ -227,7 +227,19 @@ docker push vincepr/commandservice
 kubectl rollout restart deployment commands-depl
 ```
 
-## End State
+## Finished State
 So both servers are now totally in Sync. (assuming the PlatformService is up when the Commands one starts up and on startup connects via gRPC trying to sync the data up)
 - Afterwards the Message Bus keeps the Services synced up
 - We dont handle the case gracefully of the CommandsService starting first. But a simple retry policy should solve this.
+
+## Missing from this Project
+- HTTPS/TLS inside the Kubernetes-Cluster
+- Service Discovery. Without having to hardcode the Adresses in config files, making the Services connect automatic.
+- In CommandsService Error Recovery for SeedingData, when PlatformService is initially unresponsive. Atm we would just do nothing then only fill the ones we get later from MessageBus. Better would be to reattempt Syncing of data.
+
+## Cleanup
+- following command removes all Kubernetes containers etc:
+```
+make clean
+```
+- then we just delete the DockerContainers with for example DockerDesktop

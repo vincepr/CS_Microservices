@@ -57,7 +57,7 @@ docker-pushall:
 	docker push vincepr/commandservice
 
 ## lists exhaustive status info
-statuslong:
+statusall:
 	kubectl get secrets
 	kubectl get namespaces
 	kubectl get storageclass
@@ -72,8 +72,20 @@ runc:
 
 runp:
 	dotnet run --project PlatformService --launch-profile https
-delete:
-	kubectl delete deployment commands-depl
-	kubectl delete deployment platforms-depl
-	kubectl delete deployment mssql-depl
-	
+
+## cleans up running containers etc
+clean:
+#	kubectl delete deployment rabbitmq-depl
+#	kubectl delete deployment commands-depl
+#	kubectl delete deployment platforms-depl
+#	kubectl delete deployment mssql-depl
+#	kubectl delete deployment --namespace=ingress-nginx ingress-nginx-controller
+
+	kubectl delete -f $(KPATH)/patforms-np-srv.yaml
+	kubectl delete -f $(KPATH)/platforms-depl.yaml
+	kubectl delete -f $(KPATH)/commands-depl.yaml
+	kubectl delete -f $(KPATH)/mssql-plat-depl.yaml
+	kubectl delete -f $(KPATH)/rabbitmq-depl.yaml
+	kubectl delete -f $(KPATH)/ingress-srv.yaml
+	kubectl delete -f $(KPATH)/local-volumeclaim.yaml
+	kubectl delete secret mssql
