@@ -5,26 +5,18 @@ PPATH=PlatformService
 ## path to the file with K8S deployments
 KPATH=K8S
 
+
+## builds project from scratch - ex on new pc
+init: kubectl-init writetofile
+
 # short list of status info 
 status:
 	kubectl get services
 	kubectl get pods
 	kubectl get deployments
 
-# roll out new services (after building them with "make dev" for example)
-kubectl-services:
-	kubectl apply -f $(KPATH)/platforms-depl.yaml
-	kubectl apply -f $(KPATH)/commands-depl.yaml
-	kubectl rollout restart deployment platforms-depl
-	kubectl rollout restart deployment commands-depl
-	kubectl get services
-	kubectl get pods
-
-# builds everything. 
-## On a new PC we also must do the 2 above steps before:
-## - kubectl create secret generic mssql --from-literal=SA_PASSWORD="pa55sword!"
-## - we add the folowing line to `C:\Windows\System32\drivers\etc\hosts` -> "127.0.0.1 acme.com"
-kubectl-build-all: kubectl-services
+# rebuilds everything. after config changes etc.
+kubectl-refresh-all:
 	kubectl apply -f $(KPATH)/local-volumeclaim.yaml
 	kubectl apply -f $(KPATH)/mssql-plat-depl.yaml
 	kubectl rollout restart deployment mssql-depl
@@ -39,10 +31,29 @@ kubectl-build-all: kubectl-services
 	kubectl rollout restart deployment commands-depl
 
 
+## builds the kubernetes setup from scratch
+kubectl-init:
+	kubectl create secret generic mssql --from-literal=SA_PASSWORD="pa55sword!"
+	kubectl apply -f $(KPATH)/local-volumeclaim.yaml
+	kubectl apply -f $(KPATH)/mssql-plat-depl.yaml
+	kubectl apply -f $(KPATH)/rabbitmq-depl.yaml
+	kubectl apply -f $(KPATH)/ingress-srv.yaml
+	kubectl apply -f $(KPATH)/platforms-depl.yaml
+	kubectl apply -f $(KPATH)/patforms-np-srv.yaml
+	kubectl apply -f $(KPATH)/commands-depl.yaml
+
+## this must be done as admin. (or just manually add the line)
+## - we add the folowing line to `C:\Windows\System32\drivers\etc\hosts` -> "127.0.0.1 acme.com"
+writetofile:
+	echo MANUALLY add the line "127.0.0.1 acme.com" to C:\Windows\System32\drivers\etc\hosts MUST BE DONE AS ADMIN so it will probably fail 
+	echo 127.0.0.1 acme.com >> C:\\Windows\System32\drivers\etc\hosts
+
 # build dockerfiles, push them to dockerhub and rollout restarts (assuming the yaml files did NOT change)
 dev: docker-buildall docker-pushall kubectl-rollout-services
 
 kubectl-rollout-services:
+	kubectl apply -f $(KPATH)/platforms-depl.yaml
+	kubectl apply -f $(KPATH)/commands-depl.yaml
 	kubectl rollout restart deployment platforms-depl
 	kubectl rollout restart deployment commands-depl 
 	kubectl get pods
@@ -66,7 +77,7 @@ statusall:
 	kubectl get services -A
 	kubectl get pods -A
 
-## run the dotnet projecs from root
+## run the dotnet projecs from root locally
 runc:
 	dotnet run --project CommandsService --launch-profile https
 

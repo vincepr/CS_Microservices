@@ -243,3 +243,4 @@ So both servers are now totally in Sync. (assuming the PlatformService is up whe
 make clean
 ```
 - then we just delete the DockerContainers with for example DockerDesktop
+- and clean up `C:\Windows\System32\drivers\etc\hosts` (remove the acme.com reference)
