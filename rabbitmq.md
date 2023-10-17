@@ -294,7 +294,7 @@ public class EventProcessor : IEventProcessor
         switch (eventType)
         {
             case EventType.PlatformPublished:
-                //TODO
+                AddPlatform(message);
                 break;
             default:
                 break;
@@ -314,7 +314,7 @@ public class EventProcessor : IEventProcessor
 
         switch (eventType.Event)
         {
-            case "":
+            case "New_Platform_Published":
                 Console.WriteLine("--> New_Platform_Published event-type detected.");
                 return EventType.PlatformPublished;
             default:
@@ -340,6 +340,7 @@ public class EventProcessor : IEventProcessor
                 {
                     repo.CreatePlatform(plat);
                     repo.SaveChanges();
+                    Console.WriteLine($" --> Added Platform=[{plat.Name}] to local-Server");
                 }
                 else
                 {
@@ -367,9 +368,9 @@ public class MessageBusSubscriber : BackgroundService
 {
     private readonly IConfiguration _config;
     private readonly IEventProcessor _eventProcessor;
-    private IConnection _connection;
-    private IModel _channel;
-    private string _queueName;
+    private IConnection? _connection;
+    private IModel? _channel;
+    private string? _queueName;
 
     public MessageBusSubscriber(IConfiguration config, IEventProcessor eventProcessor)
     {
@@ -405,10 +406,10 @@ public class MessageBusSubscriber : BackgroundService
 
     public override void Dispose()
     {
-        if (_channel.IsOpen)
+        if (_channel is not null && _channel.IsOpen)
         {
             _channel.Close();
-            _connection.Close();
+            _connection?.Close();
         }
         base.Dispose();
     }
@@ -435,3 +436,35 @@ public class MessageBusSubscriber : BackgroundService
 builder.Services.AddHostedService<MessageBusSubscriber>();
 ```
 
+- now we should be able to test the whole pipeline locally. 
+    - start both servers up
+- create a new Platform -> see the data hit our Subscriber:
+- Create commands for the new platform and get those back.
+```
+>> LOG FROM CommandsService
+--> Inbound POST # Command Service
+--> Event Received,
+--> Determining event
+--> New_Platform_Published event-type detected.
+info: Microsoft.EntityFrameworkCore.Update[30100]
+      Saved 1 entities to in-memory store.
+ --> Added Platform=[Docker] to local-Server
+```
+
+## We Publish the above steps to Kubernetes
+```
+// (using my Makefile)
+make dev
+
+
+// (manually)
+docker build -t vincepr/platformservice ./PlatformService
+docker push vincepr/platformservice 
+kubectl rollout restart deployment platforms-depl
+
+docker build -t vincepr/commandservice ./CommandsService
+docker push vincepr/commandservice
+kubectl rollout restart deployment commands-depl
+```
+
+- now everything should be working up there.

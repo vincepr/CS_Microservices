@@ -24,39 +24,35 @@ kubectl-services:
 ## On a new PC we also must do the 2 above steps before:
 ## - kubectl create secret generic mssql --from-literal=SA_PASSWORD="pa55sword!"
 ## - we add the folowing line to `C:\Windows\System32\drivers\etc\hosts` -> "127.0.0.1 acme.com"
-kubectl-all: kubectl-services
-	kubectl apply -f $(KPATH)/commands-depl.yaml
-	kubectl rollout restart deployment commands-depl
-	kubectl apply -f $(KPATH)/platforms-depl.yaml
-	kubectl rollout restart deployment platforms-depl
-	kubectl apply -f $(KPATH)/patforms-np-srv.yaml
-	kubectl apply -f $(KPATH)/ingress-srv.yaml
-	kubectl rollout restart deployment --namespace=ingress-nginx ingress-nginx-controller
+kubectl-build-all: kubectl-services
 	kubectl apply -f $(KPATH)/local-volumeclaim.yaml
 	kubectl apply -f $(KPATH)/mssql-plat-depl.yaml
 	kubectl rollout restart deployment mssql-depl
+	kubectl apply -f $(KPATH)/rabbitmq-depl.yaml
+	kubectl rollout restart deployment rabbitmq-depl
+	kubectl apply -f $(KPATH)/ingress-srv.yaml
+	kubectl rollout restart deployment --namespace=ingress-nginx ingress-nginx-controller
+	kubectl apply -f $(KPATH)/platforms-depl.yaml
+	kubectl rollout restart deployment platforms-depl
+	kubectl apply -f $(KPATH)/patforms-np-srv.yaml
+	kubectl apply -f $(KPATH)/commands-depl.yaml
+	kubectl rollout restart deployment commands-depl
 
 
 # build dockerfiles, push them to dockerhub and rollout restarts (assuming the yaml files did NOT change)
-dev: buildall pushall rolloutall
+dev: docker-buildall docker-pushall kubectl-rollout-services
 
-rolloutall:
+kubectl-rollout-services:
 	kubectl rollout restart deployment commands-depl 
 	kubectl rollout restart deployment platforms-depl
 	kubectl get pods
 	kubectl get deployments
 
-
-buildall: dockerbuildcservice dockerbuildpservice
-
-dockerbuildcservice:
+docker-buildall: 
 	docker build -t vincepr/commandservice $(CPATH)
-
-dockerbuildpservice:
 	docker build -t vincepr/platformservice $(PPATH)
 
-## push dockerfiles to hub
-pushall:
+docker-pushall:
 	docker push vincepr/commandservice
 	docker push vincepr/platformservice
 
