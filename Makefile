@@ -43,18 +43,18 @@ kubectl-build-all: kubectl-services
 dev: docker-buildall docker-pushall kubectl-rollout-services
 
 kubectl-rollout-services:
-	kubectl rollout restart deployment commands-depl 
 	kubectl rollout restart deployment platforms-depl
+	kubectl rollout restart deployment commands-depl 
 	kubectl get pods
 	kubectl get deployments
 
 docker-buildall: 
-	docker build -t vincepr/commandservice $(CPATH)
 	docker build -t vincepr/platformservice $(PPATH)
+	docker build -t vincepr/commandservice $(CPATH)
 
 docker-pushall:
-	docker push vincepr/commandservice
 	docker push vincepr/platformservice
+	docker push vincepr/commandservice
 
 ## lists exhaustive status info
 statuslong:
@@ -68,11 +68,10 @@ statuslong:
 
 ## run the dotnet projecs from root
 runc:
-	dotnet run --project CommandsService
+	dotnet run --project CommandsService --launch-profile https
 
 runp:
-	dotnet run --project PlatformService
-
+	dotnet run --project PlatformService --launch-profile https
 delete:
 	kubectl delete deployment commands-depl
 	kubectl delete deployment platforms-depl

@@ -205,3 +205,29 @@ public class PlatformDataClient : IPlatformDataClient
     }
 }
 ```
+
+## testing localy
+- because of grpc we need to use https now. So we use the "https"-Profile from `Properties/launchSettings.json`
+- we pass down the `-lp https` flag to dotnet   `dotnet run --project ./CommandsService --launch-profile https`
+- we spin first the Platform- then the CommandsServer up. We should get a log of:
+```
+--> Seeding new platforms
+```
+- indicating that CommandsService connected via gRPC, got it's data and used that to seed itself. Thus synchronizing the state of the two services.
+- we hit `http://localhost:6000/api/c/platforms` with a GET request resulting in all those Platforms.
+
+## rebuilding and rolling out to Kubernetes
+```
+docker build -t vincepr/platformservice ./PlatformService
+docker push vincepr/platformservice 
+kubectl rollout restart deployment platforms-depl
+
+docker build -t vincepr/commandservice ./CommandsService
+docker push vincepr/commandservice
+kubectl rollout restart deployment commands-depl
+```
+
+## End State
+So both servers are now totally in Sync. (assuming the PlatformService is up when the Commands one starts up and on startup connects via gRPC trying to sync the data up)
+- Afterwards the Message Bus keeps the Services synced up
+- We dont handle the case gracefully of the CommandsService starting first. But a simple retry policy should solve this.
