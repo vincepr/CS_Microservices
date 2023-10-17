@@ -49,7 +49,7 @@ public class EventProcessor : IEventProcessor
 
         switch (eventType.Event)
         {
-            case "":
+            case "New_Platform_Published":
                 Console.WriteLine("--> New_Platform_Published event-type detected.");
                 return EventType.PlatformPublished;
             default:

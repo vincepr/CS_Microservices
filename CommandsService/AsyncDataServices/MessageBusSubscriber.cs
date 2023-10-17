@@ -14,9 +14,9 @@ public class MessageBusSubscriber : BackgroundService
 {
     private readonly IConfiguration _config;
     private readonly IEventProcessor _eventProcessor;
-    private IConnection _connection;
-    private IModel _channel;
-    private string _queueName;
+    private IConnection? _connection;
+    private IModel? _channel;
+    private string? _queueName;
 
     public MessageBusSubscriber(IConfiguration config, IEventProcessor eventProcessor)
     {
